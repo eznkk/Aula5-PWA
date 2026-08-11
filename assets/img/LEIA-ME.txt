@@ -1,0 +1,15 @@
+Coloque aqui as imagens do jogo. O código já está preparado para usá-las
+automaticamente — se um arquivo não existir, o jogo usa um ícone de
+reserva (emoji) no lugar, então nada quebra enquanto as imagens não
+chegam.
+
+Arquivo esperado:
+- sprite-atirador.png
+  O personagem/nave que "atira" as bolinhas, na base da tela de jogo.
+  Sugestão: um desenho simples de cérebro estilizado ou de um
+  "canhão de sinapses", em PNG com fundo transparente.
+  Tamanho sugerido: aprox. 200x240px (proporção retrato).
+
+Opcionais (não usados ainda, mas podem ser adicionados futuramente e
+referenciados em style.css/app.js):
+- fundo-jogo.png — imagem de fundo decorativa da área de jogo.
