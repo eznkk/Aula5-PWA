@@ -1,0 +1,15 @@
+Coloque aqui os arquivos de som do jogo, em formato MP3. Enquanto eles
+não forem adicionados, o jogo usa sons sintetizados automaticamente
+como reserva — por isso já funciona normalmente antes de você colocar
+os arquivos finais.
+
+Arquivos esperados (os nomes precisam ser exatamente estes):
+- som-clique.mp3     Toque curto ao apertar botões e abrir/fechar telas.
+- som-tiro.mp3        Som do disparo da bolinha.
+- som-estourar.mp3    Som de "pop" ao combinar 3 ou mais bolinhas.
+- som-erro.mp3        Som de aviso ao errar uma combinação ou o teto descer.
+- som-vitoria.mp3     Som de comemoração ao iniciar ou concluir o treino.
+
+Recomendação para o público idoso: sons curtos (menos de 1 segundo,
+exceto o de vitória), tons agudos moderados (mais fáceis de perceber
+em caso de perda auditiva leve) e sem sons abruptos ou muito altos.
