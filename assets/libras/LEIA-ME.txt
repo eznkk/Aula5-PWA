@@ -1,1 +1,12 @@
+A tradução em Libras do jogo é feita pelo widget oficial do governo,
+o VLibras (https://vlibras.gov.br), já integrado em index.html. Ele
+traduz automaticamente o texto da página para Libras através de um
+avatar 3D, sem precisar de vídeos gravados.
 
+Esta pasta fica disponível caso vocês queiram adicionar futuramente:
+- icone-libras-alternativo.png  Um ícone próprio para o botão de Libras,
+  caso queiram substituir visualmente o botão padrão do VLibras via CSS.
+- Vídeos avulsos em Libras (ex.: video-tutorial-libras.mp4), caso um dia
+  prefiram complementar o avatar com um vídeo humano explicando as regras.
+
+Nenhum arquivo aqui é obrigatório para o VLibras funcionar.
