@@ -1,0 +1,10 @@
+Ícones usados quando o jogo é instalado como aplicativo (PWA) na tela
+inicial do celular/tablet, e também como favicon do site.
+
+Arquivos esperados (nomes exatos, formato PNG, fundo pode ser sólido):
+- icon-192.png   192x192px
+- icon-512.png   512x512px
+
+Dica: use o mesmo desenho em ambos os tamanhos (o navegador redimensiona
+conforme necessário) e evite texto pequeno no ícone, pois ele aparece
+minúsculo na tela do celular.
