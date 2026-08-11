@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Neurobolinhas: treino cognitivo acessível para idosos, com tema de neuroanatomia, leitura em voz alta, Libras e alto contraste.">
+    <title>Neurobolinhas - Treino Cognitivo</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Região viva para leitores de tela: anuncia pontuação e eventos sem poluir a tela -->
+    <div id="regiao-anuncios" class="apenas-leitor" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- 1. BARRA DE ACESSIBILIDADE -->
+    <header id="barra-acessibilidade" role="toolbar" aria-label="Opções de acessibilidade">
+        <div class="grupo-botoes">
+            <button class="btn icon" onclick="a11y.mudarFonte(-0.1)" aria-label="Diminuir tamanho da letra">A-</button>
+            <button class="btn icon" onclick="a11y.mudarFonte(0.1)" aria-label="Aumentar tamanho da letra">A+</button>
+            <button class="btn icon" id="btn-tema" onclick="a11y.alternarTema()" aria-label="Alternar alto contraste">🌓</button>
+            <button class="btn icon" id="btn-movimento" onclick="a11y.alternarMovimento()" aria-label="Reduzir animações" aria-pressed="false">🎞️</button>
+        </div>
+        <div class="grupo-botoes">
+            <button class="btn icon" id="btn-som" onclick="a11y.alternarSom()" aria-label="Ligar ou desligar som" aria-pressed="true">🔊</button>
+            <button class="btn icon" id="btn-voz" onclick="a11y.alternarVoz()" aria-label="Ligar ou desligar narração" aria-pressed="true">🗣️</button>
+            <button class="btn icon danger" id="btn-voltar" style="display:none;" onclick="ui.abrirModal('modal-reiniciar')" aria-label="Voltar ao início">🏠</button>
+        </div>
+    </header>
+
+    <main id="conteudo-principal">
+
+    <!-- TELA INICIAL -->
+    <section id="tela-inicio" class="tela ativa" aria-labelledby="titulo-app">
+        <div class="card-inicio">
+            <div class="logo-app" aria-hidden="true">🧠✨</div>
+            <h1 id="titulo-app">Neurobolinhas</h1>
+            <p class="subtitulo">Exercite a memória e a atenção conectando as regiões do cérebro!</p>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-rotulo">🏆 Recorde</span>
+                    <span class="stat-valor" id="stat-recorde">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-rotulo">🎮 Partidas</span>
+                    <span class="stat-valor" id="stat-partidas">0</span>
+                </div>
+            </div>
+
+            <div class="pilha-botoes">
+                <button class="btn success btn-grande" onclick="jogo.iniciar()">
+                    ▶️ COMEÇAR TREINO
+                </button>
+                <button class="btn" onclick="ui.abrirModal('modal-tutorial')">📖 COMO JOGAR</button>
+                <button class="btn" onclick="ui.abrirModal('modal-regioes')">🧠 GUIA DAS REGIÕES</button>
+                <button class="btn" onclick="ui.abrirModal('modal-opcoes')">⚙️ OPÇÕES DE JOGO</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- TELA DE JOGO -->
+    <section id="tela-jogo" class="tela" aria-label="Área de jogo">
+
+        <!-- Barra de placar: fica FORA da área de jogo, em espaço próprio,
+             para nunca sobrepor as bolinhas -->
+        <div id="hud-jogo">
+            <div class="placar-box">⭐ <span id="pontos-valor">0</span></div>
+            <div class="placar-box" id="nivel-box">Nível <span id="nivel-valor">1</span></div>
+            <div class="placar-box">Tiros: <span id="tiros-restantes" class="cor-perigo">5</span></div>
+            <button id="btn-pausa" class="btn icon" onclick="jogo.pausar()" aria-label="Pausar jogo">⏸️</button>
+        </div>
+
+        <div id="area-jogo">
+            <div id="teto" aria-hidden="true"></div>
+
+            <div id="grade-bolhas" aria-hidden="true"></div>
+            <div id="linha-mira" aria-hidden="true"></div>
+            <div id="pontos-trajetoria" aria-hidden="true"></div>
+
+            <div id="hud-inferior">
+                <div id="proxima-bolha-box">
+                    <span class="rotulo-pequeno">Próxima</span>
+                    <div id="proxima-bolha-slot" aria-hidden="true"></div>
+                </div>
+
+                <div id="atirador" aria-hidden="true">
+                    <!-- Sprite único de 6 quadros (400x240px cada, lado a lado),
+                         nomeie o arquivo como sprite-atirador.png.
+                         Quadro 1 = mira à frente, 2 = mira à direita, 6 = mira à esquerda. -->
+                    <div id="atirador-sprite"></div>
+                </div>
+
+                <!-- Controles alternativos para quem tem dificuldade de arrastar o dedo -->
+                <div id="controles-simples" class="oculto">
+                    <button class="btn icon btn-mira" onclick="jogo.ajustarAnguloBotao(-5)" aria-label="Mirar mais para a esquerda">◀️</button>
+                    <button class="btn success btn-atirar-simples" onclick="jogo.atirarBotao()" aria-label="Atirar bolinha">🎯 ATIRAR</button>
+                    <button class="btn icon btn-mira" onclick="jogo.ajustarAnguloBotao(5)" aria-label="Mirar mais para a direita">▶️</button>
+                </div>
+            </div>
+
+            <div id="bolha-carregada" class="bolha" style="display: none;"></div>
+        </div>
+    </section>
+
+    </main>
+
+    <!-- 2. MODAIS -->
+
+    <!-- Tutorial -->
+    <div class="modal-overlay" id="modal-tutorial" role="dialog" aria-modal="true" aria-labelledby="titulo-tutorial">
+        <div class="modal-content">
+            <h2 id="titulo-tutorial">Instruções</h2>
+            <div class="texto-instrucoes">
+                <p>👆 <b>Mirar:</b> toque e arraste o dedo pela tela, ou use as setas ◀️ ▶️.</p>
+                <p>🎯 <b>Atirar:</b> solte o dedo, ou toque no botão ATIRAR.</p>
+                <p>🧠 <b>Combinar:</b> junte 3 ou mais bolinhas da mesma região cerebral para estourar!</p>
+                <p>⏸️ <b>Pausar:</b> toque no botão de pausa a qualquer momento.</p>
+                <p>⚠️ <b>Cuidado:</b> ao errar 5 vezes, o teto desce. Não deixe as bolinhas encostarem em você.</p>
+            </div>
+            <button class="btn success" onclick="ui.fecharModal('modal-tutorial'); a11y.falar('Pronto para jogar!');">✅ Entendi</button>
+        </div>
+    </div>
+
+    <!-- Guia das regiões cerebrais -->
+    <div class="modal-overlay" id="modal-regioes" role="dialog" aria-modal="true" aria-labelledby="titulo-regioes">
+        <div class="modal-content">
+            <h2 id="titulo-regioes">Guia das Regiões</h2>
+            <div id="lista-regioes" class="texto-instrucoes"></div>
+            <button class="btn success" onclick="ui.fecharModal('modal-regioes')">✅ Fechar</button>
+        </div>
+    </div>
+
+    <!-- Opções de jogo -->
+    <div class="modal-overlay" id="modal-opcoes" role="dialog" aria-modal="true" aria-labelledby="titulo-opcoes">
+        <div class="modal-content">
+            <h2 id="titulo-opcoes">Opções de Jogo</h2>
+            <div class="texto-instrucoes lista-opcoes">
+                <div class="linha-opcao">
+                    <span>🐢 Velocidade reduzida da bolinha</span>
+                    <button class="btn icon" id="btn-modo-lento" onclick="jogo.alternarModoLento()" aria-pressed="false">Desligado</button>
+                </div>
+                <div class="linha-opcao">
+                    <span>🕹️ Controles com botões (sem arrastar)</span>
+                    <button class="btn icon" id="btn-controle-simples" onclick="jogo.alternarControleSimples()" aria-pressed="false">Desligado</button>
+                </div>
+            </div>
+            <button class="btn success" onclick="ui.fecharModal('modal-opcoes')">✅ Fechar</button>
+        </div>
+    </div>
+
+    <!-- Pausa -->
+    <div class="modal-overlay" id="modal-pausa" role="dialog" aria-modal="true" aria-labelledby="titulo-pausa">
+        <div class="modal-content">
+            <h2 id="titulo-pausa">⏸️ Jogo Pausado</h2>
+            <p>Respire fundo. Continue quando estiver pronto.</p>
+            <div class="linha-botoes">
+                <button class="btn success" onclick="jogo.continuar()">▶️ Continuar</button>
+                <button class="btn danger" onclick="ui.abrirModal('modal-reiniciar')">🏠 Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sair -->
+    <div class="modal-overlay" id="modal-reiniciar" role="dialog" aria-modal="true" aria-labelledby="titulo-sair">
+        <div class="modal-content">
+            <h2 id="titulo-sair" class="cor-perigo-texto">Sair do Treino?</h2>
+            <p>Deseja encerrar e voltar ao início?</p>
+            <div class="linha-botoes">
+                <button class="btn danger" onclick="jogo.voltarInicio(); ui.fecharModal('modal-reiniciar');">Sim, Sair</button>
+                <button class="btn" onclick="ui.fecharModal('modal-reiniciar')">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fim de Jogo -->
+    <div class="modal-overlay" id="modal-fim" role="dialog" aria-modal="true" aria-labelledby="titulo-fim">
+        <div class="modal-content">
+            <h2 id="titulo-fim">Fim de Treino!</h2>
+            <p class="pontuacao-final" id="pontuacao-final">0</p>
+            <p id="msg-neuro">Atenção e planejamento exercitados com sucesso!</p>
+            <div class="linha-botoes">
+                <button class="btn success" onclick="jogo.iniciar(); ui.fecharModal('modal-fim');">🔄 Jogar Novamente</button>
+                <button class="btn" onclick="jogo.voltarInicio(); ui.fecharModal('modal-fim');">🏠 Início</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SONS (arquivos a substituir manualmente em assets/audio) -->
+    <audio id="som-clique" preload="none" src="assets/audio/som-clique.mp3"></audio>
+    <audio id="som-tiro" preload="none" src="assets/audio/som-tiro.mp3"></audio>
+    <audio id="som-pop" preload="none" src="assets/audio/som-estourar.mp3"></audio>
+    <audio id="som-erro" preload="none" src="assets/audio/som-erro.mp3"></audio>
+    <audio id="som-vitoria" preload="none" src="assets/audio/som-vitoria.mp3"></audio>
+
+    <!-- 4. WIDGET VLIBRAS (Governo Federal) -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script> new window.VLibras.Widget('https://vlibras.gov.br/app'); </script>
+
+    <script src="app.js"></script>
+</body>
+</html>

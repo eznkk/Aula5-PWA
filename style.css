@@ -1,0 +1,328 @@
+/* =========================================================================
+   NEUROBOLINHAS — style.css
+   Paleta inspirada em neuroanatomia: cada bolinha representa uma região
+   do cérebro. Fonte Atkinson Hyperlegible, desenhada para leitores com
+   baixa visão, com fallback robusto para uso offline.
+   ========================================================================= */
+
+:root {
+    /* A fonte base se adapta ao tamanho da tela e ao ajuste do usuário */
+    --fonte-base: clamp(16px, 4vw, 24px);
+    --fator-usuario: 1;
+
+    /* Modo Claro — "matéria clara": fundo neutro e quente, acento sináptico azul */
+    --bg-color: #eef1fb;
+    --text-color: #1b2559;
+    --panel-bg: #ffffff;
+    --btn-bg: #2563eb;
+    --btn-text: #ffffff;
+    --btn-success: #16a34a;
+    --btn-danger: #dc2626;
+    --border-color: #1b2559;
+    --sombra-cor: rgba(27, 37, 89, 0.18);
+
+    /* Cores das regiões cerebrais (também codificadas por ícone, não só cor) */
+    --cor-frontal: #2563eb;
+    --cor-parietal: #16a34a;
+    --cor-temporal: #ea580c;
+    --cor-occipital: #7c3aed;
+    --cor-cerebelo: #db2777;
+    --cor-tronco: #0d9488;
+
+    --duracao-anim: 0.2s;
+}
+
+body.dark-mode {
+    --bg-color: #0b1024;
+    --text-color: #f5f6fb;
+    --panel-bg: #171d3d;
+    --btn-bg: #fbbf24;
+    --btn-text: #1b1200;
+    --border-color: #fbbf24;
+    --sombra-cor: rgba(0, 0, 0, 0.5);
+}
+
+/* Movimento reduzido: classe alternável pelo usuário + preferência do SO */
+body.sem-movimento *,
+body.sem-movimento *::before,
+body.sem-movimento *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Atkinson Hyperlegible', Verdana, 'Segoe UI', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: calc(var(--fonte-base) * var(--fator-usuario));
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.apenas-leitor {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Foco visível forte para navegação por teclado — essencial para acessibilidade */
+:focus-visible {
+    outline: 4px solid var(--btn-bg);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+body.dark-mode :focus-visible { outline-color: #fbbf24; }
+
+/* =========================================================================
+   BARRA DE ACESSIBILIDADE E BOTÕES
+   ========================================================================= */
+#barra-acessibilidade {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px; background: var(--panel-bg);
+    border-bottom: 3px solid var(--border-color); z-index: 100;
+    flex-wrap: wrap; gap: 8px;
+}
+.grupo-botoes { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.btn {
+    background: var(--btn-bg); color: var(--btn-text);
+    border: 3px solid var(--border-color); border-radius: 12px;
+    padding: 10px 20px; font-size: 1.05rem; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 8px; box-shadow: 0 4px 0 var(--sombra-cor);
+    transition: transform 0.1s, box-shadow 0.1s;
+    min-height: 48px; min-width: 48px; /* alvo de toque mínimo recomendado */
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0); }
+.btn.icon { padding: 8px 12px; }
+.btn.success { background: var(--btn-success); color: white; border-color: #14532d; }
+.btn.danger { background: var(--btn-danger); color: white; border-color: #7f1d1d; }
+.btn.btn-grande { font-size: 1.3rem; padding: 16px; }
+.btn[aria-pressed="true"] { outline: 4px solid var(--btn-success); }
+
+.cor-perigo { color: var(--btn-danger); }
+.cor-perigo-texto { color: var(--btn-danger); }
+
+/* =========================================================================
+   TELAS
+   ========================================================================= */
+#conteudo-principal { position: relative; flex: 1; overflow: hidden; }
+
+.tela {
+    display: none; position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; flex-direction: column;
+    overflow-y: auto;
+    background-color: var(--bg-color);
+}
+.tela.ativa { display: flex; }
+
+#tela-inicio {
+    justify-content: center; align-items: center; padding: 20px;
+}
+.card-inicio {
+    background: var(--panel-bg); border: 4px solid var(--border-color);
+    border-radius: 20px; padding: 24px; text-align: center;
+    width: 100%; max-width: 420px; box-shadow: 0 10px 20px var(--sombra-cor);
+}
+.logo-app { font-size: 4rem; line-height: 1; }
+.card-inicio h1 { color: var(--btn-bg); margin: 10px 0; font-size: 2rem; }
+.subtitulo { font-size: 1rem; opacity: 0.9; }
+
+.stats {
+    display: flex; justify-content: space-around; background: rgba(37, 99, 235, 0.08);
+    padding: 12px; border-radius: 12px; margin: 20px 0;
+}
+.stat-item { display: flex; flex-direction: column; gap: 4px; font-weight: 700; }
+.stat-valor { color: var(--btn-bg); font-size: 1.4rem; }
+
+.pilha-botoes { display: flex; flex-direction: column; gap: 10px; }
+
+/* =========================================================================
+   MODAIS
+   ========================================================================= */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7); display: none;
+    justify-content: center; align-items: center; z-index: 300; padding: 15px;
+}
+.modal-content {
+    background: var(--panel-bg); color: var(--text-color); padding: 25px;
+    border-radius: 20px; border: 4px solid var(--border-color);
+    width: 100%; max-width: 460px; text-align: center;
+    display: flex; flex-direction: column; gap: 14px;
+    max-height: 90vh; overflow-y: auto;
+}
+.modal-content h2 { color: var(--btn-bg); }
+.texto-instrucoes { text-align: left; font-size: 1rem; line-height: 1.6; }
+.texto-instrucoes p { margin-bottom: 8px; }
+.lista-opcoes { display: flex; flex-direction: column; gap: 12px; }
+.linha-opcao {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+}
+.linha-botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.pontuacao-final { font-size: 3.2rem; color: var(--btn-success); font-weight: 900; }
+
+.regiao-item {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    padding: 10px; border-radius: 12px; background: rgba(0,0,0,0.04);
+}
+.regiao-icone {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 900; font-size: 1.3rem;
+    border: 2px solid rgba(255,255,255,0.7);
+}
+.regiao-texto strong { display: block; }
+
+/* =========================================================================
+   ÁREA DE JOGO
+   ========================================================================= */
+#tela-jogo { padding: 0; background: transparent; }
+
+#area-jogo {
+    position: relative; flex: 1; width: 100%; max-width: 640px;
+    margin: 0 auto; overflow: hidden; background: var(--bg-color);
+    border-left: 3px solid var(--border-color); border-right: 3px solid var(--border-color);
+    touch-action: none;
+}
+
+.bolha {
+    position: absolute; border-radius: 50%; display: flex;
+    justify-content: center; align-items: center; font-size: 1.2rem;
+    color: rgba(0,0,0,0.65); font-weight: 900;
+    border: 3px solid rgba(255,255,255,0.75);
+    box-shadow: inset -4px -4px 8px rgba(0,0,0,0.2), 2px 2px 4px rgba(0,0,0,0.25);
+    will-change: top, left;
+}
+.bolha::after {
+    content: ''; position: absolute; top: 15%; left: 20%; width: 30%; height: 30%;
+    background: rgba(255,255,255,0.65); border-radius: 50%;
+}
+
+.bolha.estourando { animation: pop var(--duracao-anim) ease-out forwards; }
+@keyframes pop {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.55; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+/* Faísca sináptica: linha que conecta bolinhas combinadas, remetendo a
+   neurônios "disparando" juntos — o elemento de assinatura do tema. */
+.faisca-sinapse {
+    position: absolute; height: 3px; background: #fef08a;
+    box-shadow: 0 0 8px 2px #fde047; transform-origin: left center;
+    opacity: 0.95; animation: apagar-faisca 0.3s ease-out forwards;
+    pointer-events: none; z-index: 6;
+}
+@keyframes apagar-faisca { to { opacity: 0; } }
+
+#teto {
+    position: absolute; top: 0; left: 0; width: 100%; height: 0px;
+    background: repeating-linear-gradient(45deg, #94a3b8, #94a3b8 15px, #64748b 15px, #64748b 30px);
+    border-bottom: 4px solid var(--border-color); z-index: 5; transition: height 0.3s ease;
+}
+
+/* Barra de placar em fluxo normal (não flutua sobre o jogo) — reserva
+   espaço próprio, então nunca cobre as bolinhas nem o atirador. */
+#hud-jogo {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 6px; flex-wrap: wrap;
+    padding: 8px 10px; background: var(--panel-bg);
+    border-bottom: 3px solid var(--border-color); z-index: 10;
+    flex-shrink: 0;
+}
+.placar-box {
+    background: var(--bg-color); border: 2px solid var(--border-color);
+    padding: 5px 12px; border-radius: 12px; font-weight: 700; font-size: 1.05rem;
+}
+#btn-pausa { margin-left: auto; }
+
+#hud-inferior {
+    position: absolute; bottom: 0; left: 0; width: 100%; min-height: 130px;
+    display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap;
+    gap: 8px; pointer-events: none; padding-bottom: 10px;
+}
+#proxima-bolha-box {
+    position: absolute; left: 10px; bottom: 15px; background: var(--panel-bg);
+    padding: 8px; border-radius: 12px; border: 2px solid var(--border-color);
+    display: flex; flex-direction: column; align-items: center; font-weight: 700;
+    pointer-events: auto;
+}
+.rotulo-pequeno { font-size: 0.7rem; }
+#proxima-bolha-slot {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px dashed var(--border-color); margin-top: 4px; position: relative;
+}
+
+#atirador {
+    position: relative;
+    width: 115px;
+    height: 115px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+#atirador-sprite {
+    width: 100px;
+    height: 100px;
+    background-image: url('assets/img/jogo/sprite-atirador.png');
+    background-repeat: no-repeat;
+    /* 3 colunas x 100px = 300px de largura
+       2 linhas x 100px = 200px de altura */
+    background-size: 300px 200px; 
+    background-position: 0px 0px;
+    transform: scale(1.2); /* aumenta o tamanho do sprite para 120% */
+}
+
+
+#linha-mira {
+    position: absolute; width: 6px; height: 0; background: transparent;
+    border-left: 6px dashed rgba(255, 255, 255, 0.9);
+    transform-origin: bottom center; z-index: 10; opacity: 0; pointer-events: none;
+}
+
+/* Pontos de trajetória: ajudam quem tem dificuldade motora a prever a rota
+   da bolinha antes de atirar. */
+#pontos-trajetoria {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9;
+}
+.ponto-trajetoria {
+    position: absolute; width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.85); box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
+/* Controles simplificados por botão, alternativa ao arraste */
+#controles-simples {
+    display: flex; align-items: center; gap: 10px; pointer-events: auto;
+    margin-bottom: 4px;
+}
+#controles-simples.oculto { display: none; }
+.btn-mira { font-size: 1.4rem; }
+.btn-atirar-simples { font-size: 1.1rem; padding: 14px 18px; }
+
+@media (max-width: 420px) {
+    .card-inicio h1 { font-size: 1.6rem; }
+    .placar-box { font-size: 0.9rem; padding: 4px 8px; }
+}
